@@ -34,23 +34,13 @@ Print:
 • Parse result (success/failure)
 • Expression tree (text format)
 • Final evaluated result
-The project should Include support for unary operators (e.g., -3) It looks like this:
-     +                      
-    / \
-  -3   2   and include error messages for invalid expressions.
+The project should Include support for unary operators (e.g., -3) and include error messages for invalid expressions.
 **Sample Input/Output:**
 Input:
 Expression: (3 + 2) * 5 - 1
 Output:
 Tokens: [(, 3, +, 2, ), *, 5, -, 1]
 Parse Tree:
-       -
-      / \
-     *   1
-    / \
-   +   5
-  / \
- 3   2
 Evaluation Result: 24
 **Test Case Scenarios:** This program let user input the expression they want to evaluate. Following is some examples of valid and invalid inputs:
   • Valid input: 3 + 4 * 2
