@@ -6,7 +6,7 @@
 • Context-Free Grammar (expression parsing using recursive descent)
 • Expression Trees (abstract syntax trees)
 • Java Programming and OOP
-**User can run this program online Java compiler or on local machine that is preinstalled JDK for runing java file. The output displays colorful result**
+**User can run this program by using online Java compiler (https://www.programiz.com/java-programming/online-compiler/) or (https://www.onlinegdb.com/online_java_compiler#) or on your own computer that is preinstalled JDK for runing java file. The output displays colorful result**
 Description of the Task:
 You will implement a system that reads a mathematical expression string and simulates the core phases of compilation:
 **1. Lexical Analyzer (Tokenizer)**
