@@ -3,14 +3,15 @@ import java.util.*;
 /**
  * Mini Expression Compiler
  * - Lexical Analysis (tokenize)
+ *  --> Convert the input string into a list of valid tokens: number,and (+, -, *, /) 
  * - Parsing (recursive descent) with unary + and - support
- * - AST building
+ * - AST Generator --> Syntax Tree Builder
+ * - Parse tree printer
  * - Evaluation
- * - Pretty, perfectly aligned parse tree printer
- *
- * Additional behavior:
- * - Nested parentheses are treated as invalid (e.g., ((3)) is invalid)
- * - Parser reports syntax errors for invalid inputs like "3 + * 5", "()", "3 + (4 - )"
+ * - Trace Output 
+ * --> WARNING ERROR:
+ * - Nested parentheses --> invalid e.g., ((3)
+ * - Parser reports syntax errors for invalid inputs e.g "3 + * 5", "()", "3 + (4 - )"
  */
 public class MiniCompilerD {
     // COLOR setup
@@ -323,13 +324,11 @@ public class MiniCompilerD {
     // --- MAIN & TEST CASES ---
     public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
-    System.out.println(BLUE+"\t |**********"+RED+"---C--S--C--2--2--0------M|"+RESET);
-    System.out.println(BLUE+"\t |**********"+RESET+"-------------------------I|"); 
-    System.out.println(BLUE+"\t |**********"+RED+"-------------------------C|"+RESET);   
-    System.out.println("\t |----- "+YELLOW+"MINI Expression COMPILER "+ RESET+"----H|" );
-    System.out.println(RED + "\t |-----------------------------------A|"+RESET);
-    System.out.println("\t |-----------------------------------E|"); 
-    System.out.println(RED+"\t |---S--P--R--I--N--G---2--0--2--6---L|\n"+RESET);  
+    System.out.println(BLUE+"\t |********"+RED+"---C--S--C--2--2--0~~~~~"+RESET);
+    System.out.println(BLUE+"\t |********"+RESET+"~~~~~~~~~~~~~~~~~~~~~~~~"); 
+    System.out.println(RED+"\t |~~~ "+YELLOW+"MINI Expression COMPILER "+ RED+"~~~" +RESET);
+    System.out.println("\t |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"); 
+    System.out.println(RED+"\t |~S--P--R--I--N--G---2--0--2--6~~\n"+RESET);  
     System.out.println("Type an expression to evaluate, or type " +YELLOW+ "EXIT" +RESET + " to quit \n");
     
     while (true) {
