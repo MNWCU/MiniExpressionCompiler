@@ -10,7 +10,7 @@ import java.util.*;
  * - Evaluation
  * - Trace Output 
  * --> WARNING ERROR:
- * - Nested parentheses --> invalid e.g., ((3)
+ * - FIXING Nested parentheses --> invalid e.g., ((3) but ((4*5)+5)*2-10 is still VALID to evaluate
  * - Parser reports syntax errors for invalid inputs e.g "3 + * 5", "()", "3 + (4 - )"
  */
 public class MiniCompilerD {
@@ -159,33 +159,37 @@ public class MiniCompilerD {
 
         // factor -> ( + | - ) factor | NUMBER | ( expression )
         // Disallow nested parentheses: if LPAREN immediately followed by LPAREN -> error
-        private Node parseFactor() {
-            if (match(TokenType.PLUS)) {
-    return new UnaryOpNode(TokenType.PLUS, parseFactor());
-}
-    if (match(TokenType.MINUS)) {
-        if (match(TokenType.NUMBER)) {
-        // Combine unary minus with the number
-        double value = -Double.parseDouble(prev().value);
-        return new NumberNode(value);
+       private Node parseFactor() {
+
+    // --- Unary + ---
+    if (match(TokenType.PLUS)) {
+        return new UnaryOpNode(TokenType.PLUS, parseFactor());
     }
-    // If it's not a number, fall back to unary minus on an expression
-    return new BinaryOpNode(new NumberNode(0), TokenType.MINUS, parseFactor());
-}
 
+    // --- Unary - ---
+    if (match(TokenType.MINUS)) {
+        return new UnaryOpNode(TokenType.MINUS, parseFactor());
+    }
 
-            if (match(TokenType.NUMBER)) {
-                return new NumberNode(Double.parseDouble(prev().value));
-            }
-            if (match(TokenType.LPAREN)) {
-                // Check for nested parentheses immediately after '('
-                if (check(TokenType.LPAREN)) throw new RuntimeException("Syntax Error: Nested parentheses are not allowed");
-                Node node = parseExpression();
-                if (!match(TokenType.RPAREN)) throw new RuntimeException("Syntax Error: Missing closing parenthesis ')'");
-                return node;
-            }
-            throw new RuntimeException("Syntax Error: Unexpected token '" + peek().value + "'");
+    // --- Number ---
+    if (match(TokenType.NUMBER)) {
+        return new NumberNode(Double.parseDouble(prev().value));
+    }
+
+    // --- Parentheses (now supports nested) ---
+    if (match(TokenType.LPAREN)) {
+        Node node = parseExpression();
+
+        if (!match(TokenType.RPAREN)) {
+            throw new RuntimeException("Syntax Error: Missing closing parenthesis ')'");
         }
+
+        return node;
+    }
+
+    // --- Otherwise: invalid token ---
+    throw new RuntimeException("Syntax Error: Unexpected token '" + peek().value + "'");
+}
 
         // helpers
         private boolean match(TokenType... types) {
@@ -234,6 +238,17 @@ public class MiniCompilerD {
             
             if (node instanceof UnaryOpNode) {
     UnaryOpNode un = (UnaryOpNode) node;
+
+    // SPECIAL CASE: unary minus applied directly to a number → print as "-3"
+    if (un.expr instanceof NumberNode) {
+        double v = un.expr.evaluate();
+        double neg = (un.op == TokenType.MINUS) ? -v : v;
+
+        String s = (neg == Math.floor(neg)) ? String.valueOf((int)neg) : String.valueOf(neg);
+        return new Box(List.of(s), s.length(), 1, s.length() / 2);
+    }
+
+    // NORMAL CASE: print vertical unary operator
     Box child = build(un.expr);
     String root = un.opSymbol();
 
@@ -241,7 +256,7 @@ public class MiniCompilerD {
     int width = child.width + gap;
 
     int childCenter = child.rootPos;
-    int rootPos = childCenter; // operator sits above child
+    int rootPos = childCenter;
 
     char[] first = spaces(width);
     putString(first, root, rootPos - root.length() / 2);
@@ -259,7 +274,7 @@ public class MiniCompilerD {
 
     return new Box(merged, width, merged.size(), rootPos);
 }
-
+   
 
             BinaryOpNode bin = (BinaryOpNode) node;
             Box left = build(bin.left);
@@ -362,13 +377,13 @@ public class MiniCompilerD {
 
             // Evaluate
             double result = root.evaluate();
-           // Format: integer if whole number, else 1 decimal place
-String formatted =
-    (result == Math.floor(result))
-        ? String.valueOf((int) result)
-        : String.format("%.1f", result);
 
-        System.out.println(BLUE + "Evaluation Result: " + RESET + formatted); // Color Result
+// If result has no fractional part, print as integer
+if (result % 1 == 0) {
+    System.out.println(BLUE + "Evaluation Result: " + RESET + (int) result);
+} else {
+    System.out.println(BLUE + "Evaluation Result: " + RESET + String.format("%.1f", result));
+}
 
         } catch (Exception e) {
             System.out.println(YELLOW + "INVALID input\n" +RED+ e.getMessage() + RESET); //Color Warning Message
